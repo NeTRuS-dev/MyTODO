@@ -6,9 +6,11 @@ import java.util.Date
 
 @Entity
 data class Note(
-    @PrimaryKey(autoGenerate = true) val id: Int,
-    val name: String,
-    val content: String?,
-    val created_at: Long,
-    val updated_at: Long,
-)
+    var name: String,
+    var content: String?,
+    var created_at: Long,
+    var updated_at: Long,
+) {
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
+}

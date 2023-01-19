@@ -1,9 +1,6 @@
 package com.example.mytodo.core.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.example.mytodo.core.models.Note
 import kotlinx.coroutines.flow.Flow
 
@@ -13,17 +10,20 @@ interface NotesDao {
     fun getAll(): Flow<List<Note>>
 
     @Query("SELECT * FROM note WHERE id = :id")
-    fun getNoteById(id: Int): Note
+    suspend fun getNoteById(id: Int): Note
 
     @Query("SELECT * FROM note WHERE id IN (:noteIds)")
-    fun loadAllByIds(noteIds: IntArray): List<Note>
+    suspend fun loadAllByIds(noteIds: IntArray): List<Note>
 
     @Query("SELECT * FROM note WHERE name LIKE :name LIMIT 1")
-    fun findByName(name: String): Note
+    suspend fun findByName(name: String): Note
 
     @Insert
-    fun insertAll(vararg notes: Note)
+    suspend fun insertAll(vararg notes: Note)
+
+    @Update
+    suspend fun updateAll(vararg notes: Note)
 
     @Delete
-    fun delete(note: Note)
+    suspend fun delete(note: Note)
 }
