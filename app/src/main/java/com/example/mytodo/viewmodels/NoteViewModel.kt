@@ -7,6 +7,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val notesManager: NotesManager) : ViewModel() {
-    fun getAllNotes() = notesManager.getAllNotes()
+class NoteViewModel @Inject constructor(private val notesManager: NotesManager) : ViewModel() {
+    fun getNoteById(id: Int) = notesManager.getNoteById(id)
 }

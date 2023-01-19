@@ -6,6 +6,7 @@ plugins {
     // hilt
     id 'kotlin-kapt'
     id("com.google.dagger.hilt.android")
+    id 'androidx.navigation.safeargs'
 }
 
 android {
@@ -52,7 +53,6 @@ dependencies {
     // Kotlin
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
-
     // Kotlin
     implementation("androidx.fragment:fragment-ktx:$fragment_version")
 

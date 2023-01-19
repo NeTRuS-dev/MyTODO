@@ -7,9 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.coroutineScope
+import androidx.navigation.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.mytodo.R
 import com.example.mytodo.databinding.FragmentHomeBinding
 import com.example.mytodo.viewmodels.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -27,11 +32,25 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val recyclerView = binding.notesRecyclerView
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val notesAdapter = NotesAdapter {
+            val action = HomeFragmentDirections.actionHomeFragmentToNoteFragment(it.id)
+            view.findNavController().navigate(action)
+        }
+        recyclerView.adapter = notesAdapter
+        lifecycle.coroutineScope.launch {
+            homeViewModel.getAllNotes().collect {
+                notesAdapter.submitList(it)
+            }
+        }
+
+
         binding.addNewNoteBtn.setOnClickListener {
-            // toast add new note
-            Toast
-                .makeText(requireContext(), "Add new note", Toast.LENGTH_SHORT)
-                .show()
+            // creates a new note
+            val action = HomeFragmentDirections.actionHomeFragmentToNoteFragment(-1)
+            view.findNavController().navigate(action)
         }
     }
 }
