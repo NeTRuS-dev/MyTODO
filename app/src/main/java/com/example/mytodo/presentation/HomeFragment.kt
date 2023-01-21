@@ -5,16 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.mytodo.R
+import com.example.mytodo.core.models.Note
 import com.example.mytodo.databinding.FragmentHomeBinding
 import com.example.mytodo.viewmodels.HomeViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -36,17 +35,37 @@ class HomeFragment : Fragment() {
 
         val recyclerView = binding.notesRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        val notesAdapter = NotesAdapter {
+        val editCallback: ((Note) -> Unit) = {
             val action = HomeFragmentDirections.actionHomeFragmentToNoteFragment(it.id)
             view.findNavController().navigate(action)
         }
+        val notesAdapter = NotesAdapter(
+            editCallback,
+            {
+                editCallback(it)
+                true
+            },
+            {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Требуется подтверждение")
+                    .setMessage("Вы хотите удалить эту заметку?")
+                    .setPositiveButton("Да") { _, _ ->
+                        lifecycle.coroutineScope.launch {
+                            homeViewModel.deleteNote(it)
+                        }
+                    }
+                    .setNegativeButton("Нет") { _, _ -> }
+                    .show()
+                true
+            }
+        )
         recyclerView.adapter = notesAdapter
         lifecycle.coroutineScope.launch {
             homeViewModel.getAllNotes().collect {
                 notesAdapter.submitList(it)
             }
         }
-
+        registerForContextMenu(recyclerView)
 
         binding.addNewNoteBtn.setOnClickListener {
             // creates a new note

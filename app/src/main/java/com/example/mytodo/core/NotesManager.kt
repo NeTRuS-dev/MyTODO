@@ -10,4 +10,6 @@ class NotesManager @Inject constructor(private val notesDao: NotesDao) {
     fun getAllNotes() = notesDao.getAll()
     suspend fun addNewNote(note: Note) = notesDao.insertAll(note)
     suspend fun updateNote(note: Note) = notesDao.updateAll(note)
+
+    suspend fun deleteNote(note: Note) = notesDao.delete(note)
 }

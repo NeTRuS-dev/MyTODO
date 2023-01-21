@@ -30,7 +30,6 @@ class NoteFragment : Fragment() {
     private var content: String? = null
     private var name: String? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -80,6 +79,20 @@ class NoteFragment : Fragment() {
                 }
             }
         }
+    }
 
+    override fun onStart() {
+        super.onStart()
+        (requireActivity() as MainActivity)
+            .supportActionBar
+            ?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        (requireActivity() as MainActivity)
+            .supportActionBar
+            ?.setDisplayHomeAsUpEnabled(false)
     }
 }
