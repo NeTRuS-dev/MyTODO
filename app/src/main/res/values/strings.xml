@@ -6,4 +6,10 @@
     <string name="note_save">Сохранить</string>
     <string name="edit">Изменить</string>
     <string name="delete">Удалить</string>
+    <string name="required_approvement">Требуется подтверждение</string>
+    <string name="want_to_delete_note">Вы хотите удалить эту заметку?</string>
+    <string name="note_set_alarm">Добавить уведомление</string>
+    <string name="confirm_remove_alarm">Вы действительно хотите удалить напоминание?</string>
+    <string name="chose_date">Выберите дату</string>
+    <string name="chose_time">Выберите время</string>
 </resources>

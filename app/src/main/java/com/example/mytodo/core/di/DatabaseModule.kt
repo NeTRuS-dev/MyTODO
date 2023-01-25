@@ -3,6 +3,7 @@ package com.example.mytodo.core.di
 import android.content.Context
 import androidx.room.Room
 import com.example.mytodo.core.AppDatabase
+import com.example.mytodo.core.dao.AlarmsDao
 import com.example.mytodo.core.dao.NotesDao
 import dagger.Module
 import dagger.Provides
@@ -27,7 +28,12 @@ class DatabaseModule {
     }
 
     @Provides
-    fun provideChannelDao(appDatabase: AppDatabase): NotesDao {
+    fun provideNoteDao(appDatabase: AppDatabase): NotesDao {
         return appDatabase.noteDao()
+    }
+
+    @Provides
+    fun provideAlarmsDao(appDatabase: AppDatabase): AlarmsDao {
+        return appDatabase.alarmsDao()
     }
 }

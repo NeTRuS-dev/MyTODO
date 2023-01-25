@@ -6,9 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.liveData
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.mytodo.R
 import com.example.mytodo.core.models.Note
 import com.example.mytodo.databinding.FragmentHomeBinding
 import com.example.mytodo.viewmodels.HomeViewModel
@@ -47,8 +50,8 @@ class HomeFragment : Fragment() {
             },
             {
                 MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Требуется подтверждение")
-                    .setMessage("Вы хотите удалить эту заметку?")
+                    .setTitle(getString(R.string.required_approvement))
+                    .setMessage(getString(R.string.want_to_delete_note))
                     .setPositiveButton("Да") { _, _ ->
                         lifecycle.coroutineScope.launch {
                             homeViewModel.deleteNote(it)
@@ -60,11 +63,10 @@ class HomeFragment : Fragment() {
             }
         )
         recyclerView.adapter = notesAdapter
-        lifecycle.coroutineScope.launch {
-            homeViewModel.getAllNotes().collect {
-                notesAdapter.submitList(it)
-            }
+        homeViewModel.allNotes.observe(viewLifecycleOwner) {
+            notesAdapter.submitList(it)
         }
+
         registerForContextMenu(recyclerView)
 
         binding.addNewNoteBtn.setOnClickListener {
