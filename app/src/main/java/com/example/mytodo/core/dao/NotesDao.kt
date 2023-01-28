@@ -10,13 +10,10 @@ interface NotesDao {
     fun getAll(): Flow<List<Note>>
 
     @Query("SELECT * FROM note WHERE id = :id")
-    suspend fun getNoteById(id: Int): Note
-
-    @Query("SELECT * FROM note WHERE id IN (:noteIds)")
-    suspend fun loadAllByIds(noteIds: IntArray): List<Note>
+    suspend fun getNoteById(id: Int): Note?
 
     @Query("SELECT * FROM note WHERE name LIKE :name LIMIT 1")
-    suspend fun findByName(name: String): Note
+    suspend fun findByName(name: String): Note?
 
     @Insert
     suspend fun insertAll(vararg notes: Note)

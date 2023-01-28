@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AlarmsDao {
     @Query("SELECT * FROM alarm WHERE id = :id")
-    suspend fun getAlarmById(id: Int): Alarm
+    suspend fun getAlarmById(id: Int): Alarm?
 
     @Query("SELECT * FROM alarm WHERE noteId = :noteId")
     fun getAlarmsForNoteId(noteId: Int): Flow<List<Alarm>>

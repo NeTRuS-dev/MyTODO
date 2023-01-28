@@ -11,6 +11,7 @@ import com.example.mytodo.core.models.Note
 @Database(
     version = 1,
     entities = [Note::class, Alarm::class],
+    autoMigrations = []
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun noteDao(): NotesDao

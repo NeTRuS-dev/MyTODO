@@ -24,6 +24,7 @@ class DatabaseModule {
             "app_database"
         )
             .enableMultiInstanceInvalidation()
+            .fallbackToDestructiveMigration()
             .build()
     }
 

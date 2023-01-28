@@ -19,8 +19,10 @@ class NotesManager @Inject constructor(
     suspend fun addAlarm(alarm: Alarm) = alarmsDao.insertAll(alarm)
     suspend fun deleteNote(note: Note) = notesDao.delete(note)
     suspend fun deleteAlarm(note: Note?, alarm: Alarm) {
-        if (note != null && alarm.noteId == note.id) {
-            alarmsDao.delete(alarm)
+        note?.let {
+            if (alarm.noteId == it.id) {
+                alarmsDao.delete(alarm)
+            }
         }
     }
 }

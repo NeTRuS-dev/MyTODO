@@ -24,7 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-private const val ARG_ID = "noteId"
+public const val ARG_ID = "noteId"
 
 @AndroidEntryPoint
 class NoteFragment : Fragment() {
@@ -78,7 +78,7 @@ class NoteFragment : Fragment() {
                 .setMessage(getString(R.string.confirm_remove_alarm))
                 .setPositiveButton("Да") { _, _ ->
                     lifecycle.coroutineScope.launch {
-                        noteViewModel.deleteAlarm(it)
+                        noteViewModel.deleteAlarm(requireContext(), it)
                     }
                 }
                 .setNegativeButton("Нет") { _, _ -> }
@@ -112,7 +112,12 @@ class NoteFragment : Fragment() {
                     .build()
                 timePicker.addOnPositiveButtonClickListener {
                     lifecycle.coroutineScope.launch {
-                        noteViewModel.addAlarm(selectedDateMilliseconds, timePicker.hour, timePicker.minute)
+                        noteViewModel.addAlarm(
+                            requireContext(),
+                            selectedDateMilliseconds,
+                            timePicker.hour,
+                            timePicker.minute
+                        )
                     }
                 }
                 timePicker.show(childFragmentManager, "timePicker")
