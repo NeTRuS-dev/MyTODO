@@ -14,9 +14,14 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint(BroadcastReceiver::class)
-class NotificationsReceiver @Inject constructor(
-    private val notesManager: NotesManager,
-) : Hilt_NotificationsReceiver() {
+class NotificationsReceiver : Hilt_NotificationsReceiver() {
+
+    @Inject
+    lateinit var notesManager: NotesManager
+
+    @Inject
+    lateinit var alarmService: AlarmService
+
     override fun onReceive(context: Context?, intent: Intent?) {
         super.onReceive(context, intent)
         context?.let {
@@ -24,7 +29,6 @@ class NotificationsReceiver @Inject constructor(
                 val noteId = intent.getIntExtra(ARG_ID, -1)
                 if (noteId != -1) {
                     goAsync {
-                        val alarmService = AlarmService(context)
                         getNoteById(noteId)?.let { note ->
                             val redirectIntent = alarmService.createPendingIntentToFragment(
                                 R.id.noteFragment,

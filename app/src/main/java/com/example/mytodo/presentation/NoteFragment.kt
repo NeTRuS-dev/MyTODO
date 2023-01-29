@@ -1,18 +1,16 @@
 package com.example.mytodo.presentation
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mytodo.R
-import com.example.mytodo.core.models.Note
 import com.example.mytodo.databinding.FragmentNoteBinding
 import com.example.mytodo.viewmodels.NoteViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -20,11 +18,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-public const val ARG_ID = "noteId"
+const val ARG_ID = "noteId"
 
 @AndroidEntryPoint
 class NoteFragment : Fragment() {
@@ -78,7 +74,7 @@ class NoteFragment : Fragment() {
                 .setMessage(getString(R.string.confirm_remove_alarm))
                 .setPositiveButton("Да") { _, _ ->
                     lifecycle.coroutineScope.launch {
-                        noteViewModel.deleteAlarm(requireContext(), it)
+                        noteViewModel.deleteAlarm(it)
                     }
                 }
                 .setNegativeButton("Нет") { _, _ -> }
@@ -113,16 +109,15 @@ class NoteFragment : Fragment() {
                 timePicker.addOnPositiveButtonClickListener {
                     lifecycle.coroutineScope.launch {
                         noteViewModel.addAlarm(
-                            requireContext(),
                             selectedDateMilliseconds,
                             timePicker.hour,
                             timePicker.minute
                         )
                     }
                 }
-                timePicker.show(childFragmentManager, "timePicker")
+                timePicker.show(childFragmentManager, "alarmTimePicker")
             }
-            datePicker.show(parentFragmentManager, "datePicker")
+            datePicker.show(parentFragmentManager, "alarmDatePicker")
         }
     }
 

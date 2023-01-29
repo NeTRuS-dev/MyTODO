@@ -1,10 +1,12 @@
 package com.example.mytodo.core
 
 import android.Manifest
+import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -14,10 +16,18 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
 import com.example.mytodo.R
+import com.example.mytodo.core.extensions.nextPositiveInt
+import com.example.mytodo.core.models.Note
+import com.example.mytodo.presentation.ARG_ID
 import com.example.mytodo.presentation.MainActivity
+import dagger.hilt.android.qualifiers.ApplicationContext
+import java.util.*
+import javax.inject.Inject
 
 
-class AlarmService(private val context: Context) {
+class AlarmService @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
     init {
         createNotificationChannel(context)
     }
@@ -61,6 +71,42 @@ class AlarmService(private val context: Context) {
             .setDestination(fragmentId)
             .setArguments(bundle)
             .createPendingIntent()
+    }
+
+    fun createAlarm(note: Note, executeAt: Long, requestCode: Int? = null): Int {
+        var alarmCode = requestCode
+        if (alarmCode == null) {
+            alarmCode = Random().nextPositiveInt()
+        }
+        val pendingIntent = buildAlarmIntent(alarmCode, note.id)
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setExact(
+            AlarmManager.RTC_WAKEUP,
+            executeAt,
+            pendingIntent
+        )
+
+        return alarmCode
+
+    }
+
+    fun cancelAlarm(note: Note, alarmCode: Int) {
+        val pendingIntent = buildAlarmIntent(alarmCode, note.id)
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+        alarmManager?.cancel(pendingIntent)
+    }
+
+    private fun buildAlarmIntent(alarmCode: Int, noteId: Int): PendingIntent {
+        val intent = Intent(context, NotificationsReceiver::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        intent.putExtra(ARG_ID, noteId)
+        return PendingIntent.getBroadcast(
+            context,
+            alarmCode,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
     }
 
     private fun createNotificationChannel(context: Context) {

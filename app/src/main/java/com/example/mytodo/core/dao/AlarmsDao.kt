@@ -12,6 +12,12 @@ interface AlarmsDao {
     @Query("SELECT * FROM alarm WHERE noteId = :noteId")
     fun getAlarmsForNoteId(noteId: Int): Flow<List<Alarm>>
 
+    @Query("SELECT * FROM alarm WHERE noteId = :noteId")
+    fun getAlarmsForNoteIdOnce(noteId: Int): List<Alarm>
+
+    @Query("SELECT * FROM alarm")
+    fun getAllAlarmsOnce(): List<Alarm>
+
     @Insert
     suspend fun insertAll(vararg alarms: Alarm)
 
