@@ -26,4 +26,15 @@ class NotesManager @Inject constructor(
             }
         }
     }
+
+    suspend fun deleteNoteAndAlarms(alarmService: AlarmService, note: Note) {
+        val alarms = getAlarmsForNoteIdOnce(note.id)
+        alarms.forEach { alarm ->
+            alarm.alarmCode?.let { alarmCode ->
+                alarmService.cancelAlarm(note, alarmCode)
+            }
+            deleteAlarm(note, alarm)
+        }
+        deleteNote(note)
+    }
 }

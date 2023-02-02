@@ -1,12 +1,13 @@
 package com.example.mytodo.presentation
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,7 +24,7 @@ import kotlinx.coroutines.launch
 const val ARG_ID = "noteId"
 
 @AndroidEntryPoint
-class NoteFragment : Fragment() {
+class NoteFragment : Fragment(), MenuProvider {
     private val noteViewModel: NoteViewModel by viewModels()
 
     private lateinit var binding: FragmentNoteBinding
@@ -40,6 +41,9 @@ class NoteFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         binding = FragmentNoteBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -85,40 +89,6 @@ class NoteFragment : Fragment() {
         noteViewModel.noteAlarms.observe(viewLifecycleOwner) {
             alarmsAdapter.submitList(it)
         }
-
-        binding.noteSetAlarmBtn.setOnClickListener {
-            if (noteViewModel.note.value == null) {
-                Toast.makeText(requireContext(), "Сначала сохраните заметку", Toast.LENGTH_SHORT)
-                    .show()
-                return@setOnClickListener
-            }
-            val datePicker = MaterialDatePicker
-                .Builder
-                .datePicker()
-                .setTitleText(getString(R.string.chose_date))
-                // set selection tomorrow
-                .setSelection(MaterialDatePicker.todayInUtcMilliseconds() + 24 * 60 * 60 * 1000)
-                .build()
-            datePicker.addOnPositiveButtonClickListener { selectedDateMilliseconds ->
-                val timePicker = MaterialTimePicker.Builder()
-                    .setTimeFormat(TimeFormat.CLOCK_24H)
-                    .setHour(12)
-                    .setMinute(0)
-                    .setTitleText(getString(R.string.chose_time))
-                    .build()
-                timePicker.addOnPositiveButtonClickListener {
-                    lifecycle.coroutineScope.launch {
-                        noteViewModel.addAlarm(
-                            selectedDateMilliseconds,
-                            timePicker.hour,
-                            timePicker.minute
-                        )
-                    }
-                }
-                timePicker.show(childFragmentManager, "alarmTimePicker")
-            }
-            datePicker.show(parentFragmentManager, "alarmDatePicker")
-        }
     }
 
     override fun onStart() {
@@ -134,5 +104,67 @@ class NoteFragment : Fragment() {
         (requireActivity() as MainActivity)
             .supportActionBar
             ?.setDisplayHomeAsUpEnabled(false)
+    }
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.note_menu, menu)
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            R.id.add_alarm -> {
+                if (noteViewModel.note.value == null) {
+                    Toast.makeText(requireContext(), getString(R.string.save_note_first), Toast.LENGTH_SHORT)
+                        .show()
+                    return true
+                }
+                val datePicker = MaterialDatePicker
+                    .Builder
+                    .datePicker()
+                    .setTitleText(getString(R.string.chose_date))
+                    // set selection tomorrow
+                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds() + 24 * 60 * 60 * 1000)
+                    .build()
+                datePicker.addOnPositiveButtonClickListener { selectedDateMilliseconds ->
+                    val timePicker = MaterialTimePicker.Builder()
+                        .setTimeFormat(TimeFormat.CLOCK_24H)
+                        .setHour(12)
+                        .setMinute(0)
+                        .setTitleText(getString(R.string.chose_time))
+                        .build()
+                    timePicker.addOnPositiveButtonClickListener {
+                        lifecycle.coroutineScope.launch {
+                            noteViewModel.addAlarm(
+                                selectedDateMilliseconds,
+                                timePicker.hour,
+                                timePicker.minute
+                            )
+                        }
+                    }
+                    timePicker.show(childFragmentManager, "alarmTimePicker")
+                }
+                datePicker.show(parentFragmentManager, "alarmDatePicker")
+            }
+            R.id.delete_note -> {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(getString(R.string.required_approvement))
+                    .setMessage(getString(R.string.want_to_delete_note))
+                    .setPositiveButton("Да") { _, _ ->
+                        lifecycle.coroutineScope.launch {
+                            noteViewModel.deleteCurrentNote()
+                        }.invokeOnCompletion {
+                            if (it == null) {
+                                NoteFragmentDirections.actionNoteFragmentToHomeFragment().let { action ->
+                                    view?.findNavController()?.navigate(action)
+                                }
+                            }
+                        }
+                    }
+                    .setNegativeButton("Нет") { _, _ -> }
+                    .show()
+                return true
+            }
+        }
+        return true
     }
 }

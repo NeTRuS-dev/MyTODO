@@ -49,6 +49,12 @@ class NoteViewModel @Inject constructor(
         }
     }
 
+    suspend fun deleteCurrentNote() = withContext(Dispatchers.IO) {
+        note.value?.let { note ->
+            notesManager.deleteNoteAndAlarms(alarmService, note)
+        }
+    }
+
     suspend fun deleteAlarm(alarm: Alarm) = withContext(Dispatchers.IO) {
         alarm.alarmCode?.let { alarmCode ->
             alarmService.cancelAlarm(note.value!!, alarmCode)

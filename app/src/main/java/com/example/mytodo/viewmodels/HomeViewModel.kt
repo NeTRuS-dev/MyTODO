@@ -27,13 +27,6 @@ class HomeViewModel @Inject constructor(
     }
 
     suspend fun deleteNote(note: Note) = withContext(Dispatchers.IO) {
-        val alarms = notesManager.getAlarmsForNoteIdOnce(note.id)
-        alarms.forEach { alarm ->
-            alarm.alarmCode?.let { alarmCode ->
-                alarmService.cancelAlarm(note, alarmCode)
-            }
-            notesManager.deleteAlarm(note, alarm)
-        }
-        notesManager.deleteNote(note)
+        notesManager.deleteNoteAndAlarms(alarmService, note)
     }
 }
