@@ -2,7 +2,6 @@ package com.example.mytodo.presentation
 
 import android.view.*
 import androidx.appcompat.widget.PopupMenu
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -66,6 +65,16 @@ class NotesAdapter(
         fun bind(note: Note) {
             this.note = note
             binding.noteTitle.text = note.name
+
+            // get first 100 symbols from note content and add ... if content length > 100
+            if (note.content != null) {
+                val content = note.content!!
+                binding.noteContentPreview.text = if (content.length > 100) {
+                    content.substring(0, 100) + "..."
+                } else {
+                    content
+                }
+            }
 
             val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
             val netDate = Date(note.updated_at)
