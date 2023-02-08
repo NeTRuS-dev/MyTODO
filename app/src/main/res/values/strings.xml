@@ -16,4 +16,6 @@
     <string name="channel_description">Уведомления MyTODO</string>
     <string name="delete_note">Удалить заметку</string>
     <string name="save_note_first">Сначала сохраните заметку</string>
+    <string name="note_name">Название</string>
+    <string name="note_content">Текст заметки</string>
 </resources>
