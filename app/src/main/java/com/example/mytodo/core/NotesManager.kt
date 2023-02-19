@@ -16,7 +16,7 @@ class NotesManager @Inject constructor(
     fun getAllNotes() = notesDao.getAll()
     suspend fun addNewNote(note: Note) = notesDao.insertAll(note)
     fun getAllAlarmsOnce() = alarmsDao.getAllAlarmsOnce()
-    suspend fun updateNote(note: Note) = notesDao.updateAll(note)
+    suspend fun updateNote(note: Note) = notesDao.update(note)
     suspend fun addAlarm(alarm: Alarm) = alarmsDao.insertAll(alarm)
     suspend fun deleteNote(note: Note) = notesDao.delete(note)
     suspend fun deleteAlarm(note: Note?, alarm: Alarm) {

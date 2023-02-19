@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NotesDao {
-    @Query("SELECT * FROM note ORDER BY updated_at DESC")
+    @Query("SELECT * FROM note ORDER BY is_done ASC, updated_at DESC")
     fun getAll(): Flow<List<Note>>
 
     @Query("SELECT * FROM note WHERE id = :id")
@@ -19,7 +19,7 @@ interface NotesDao {
     suspend fun insertAll(vararg notes: Note)
 
     @Update
-    suspend fun updateAll(vararg notes: Note)
+    suspend fun update(note: Note)
 
     @Delete
     suspend fun delete(note: Note)

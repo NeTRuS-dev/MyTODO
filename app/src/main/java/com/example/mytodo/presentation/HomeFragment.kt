@@ -6,22 +6,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.coroutineScope
-import androidx.lifecycle.liveData
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mytodo.R
+import com.example.mytodo.core.NotesManager
 import com.example.mytodo.core.models.Note
 import com.example.mytodo.databinding.FragmentHomeBinding
 import com.example.mytodo.viewmodels.HomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
+
+    @Inject
+    lateinit var notesManager: NotesManager
 
     private val homeViewModel: HomeViewModel by viewModels()
 
@@ -45,8 +49,24 @@ class HomeFragment : Fragment() {
         val notesAdapter = NotesAdapter(
             editCallback,
             {
-                editCallback(it)
-                true
+                lifecycle.coroutineScope.launch {
+                    notesManager.updateNote(
+                        it.copy(
+                            updated_at = Date().time,
+                            is_done = true
+                        )
+                    )
+                }
+            },
+            {
+                lifecycle.coroutineScope.launch {
+                    notesManager.updateNote(
+                        it.copy(
+                            updated_at = Date().time,
+                            is_done = false
+                        )
+                    )
+                }
             },
             {
                 MaterialAlertDialogBuilder(requireContext())

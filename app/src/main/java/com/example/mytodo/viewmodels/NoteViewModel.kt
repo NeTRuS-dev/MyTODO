@@ -87,7 +87,7 @@ class NoteViewModel @Inject constructor(
             }
         }
 
-    suspend fun markNoteAsDone() {
+    suspend fun markNoteAsDone() = withContext(Dispatchers.IO) {
         note.value?.let {
             notesManager.updateNote(
                 it.copy(
@@ -98,7 +98,7 @@ class NoteViewModel @Inject constructor(
         }
     }
 
-    suspend fun markNoteAsNotDone() {
+    suspend fun markNoteAsNotDone() = withContext(Dispatchers.IO) {
         note.value?.let {
             notesManager.updateNote(
                 it.copy(

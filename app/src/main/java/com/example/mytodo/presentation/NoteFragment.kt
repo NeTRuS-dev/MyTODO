@@ -94,6 +94,7 @@ class NoteFragment : Fragment(), MenuProvider {
 
     override fun onStart() {
         super.onStart()
+
         (requireActivity() as MainActivity)
             .supportActionBar
             ?.setDisplayHomeAsUpEnabled(true)
@@ -108,12 +109,14 @@ class NoteFragment : Fragment(), MenuProvider {
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        if (noteViewModel.note.value != null) {
-            menuInflater.inflate(R.menu.note_menu, menu)
-            if (noteViewModel.note.value?.is_done == true) {
-                menu.findItem(R.id.mark_as_done).isVisible = false
-            } else {
-                menu.findItem(R.id.mark_as_undone).isVisible = false
+        noteViewModel.note.observe(viewLifecycleOwner) { note ->
+            if (note != null) {
+                menuInflater.inflate(R.menu.note_menu, menu)
+                if (note.is_done) {
+                    menu.findItem(R.id.mark_as_done).isVisible = false
+                } else {
+                    menu.findItem(R.id.mark_as_undone).isVisible = false
+                }
             }
         }
     }

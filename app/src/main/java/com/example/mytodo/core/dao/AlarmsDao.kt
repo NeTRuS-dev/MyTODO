@@ -22,7 +22,7 @@ interface AlarmsDao {
     suspend fun insertAll(vararg alarms: Alarm)
 
     @Update
-    suspend fun updateAll(vararg alarms: Alarm)
+    suspend fun update(alarm: Alarm)
 
     @Delete
     suspend fun delete(alarm: Alarm)
