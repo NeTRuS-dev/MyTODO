@@ -80,7 +80,7 @@ class AlarmService @Inject constructor(
         }
         val pendingIntent = buildAlarmIntent(alarmCode, note.id)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.setExact(
+        alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             executeAt,
             pendingIntent
