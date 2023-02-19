@@ -18,4 +18,6 @@
     <string name="save_note_first">Сначала сохраните заметку</string>
     <string name="note_name">Название</string>
     <string name="note_content">Текст заметки</string>
+    <string name="mark_as_done">Пометить как выполненное</string>
+    <string name="mark_as_undone">Пометить как невыполненное</string>
 </resources>

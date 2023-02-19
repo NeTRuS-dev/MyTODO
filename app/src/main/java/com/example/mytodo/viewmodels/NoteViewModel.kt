@@ -43,7 +43,9 @@ class NoteViewModel @Inject constructor(
         } else {
             notesManager.updateNote(
                 note.value!!.copy(
-                    name = name, content = content, updated_at = Date().time
+                    name = name,
+                    content = content,
+                    updated_at = Date().time
                 )
             )
         }
@@ -84,6 +86,28 @@ class NoteViewModel @Inject constructor(
                 )
             }
         }
+
+    suspend fun markNoteAsDone() {
+        note.value?.let {
+            notesManager.updateNote(
+                it.copy(
+                    updated_at = Date().time,
+                    is_done = true
+                )
+            )
+        }
+    }
+
+    suspend fun markNoteAsNotDone() {
+        note.value?.let {
+            notesManager.updateNote(
+                it.copy(
+                    updated_at = Date().time,
+                    is_done = false
+                )
+            )
+        }
+    }
 
     private fun utcToLocalTime(dateInMilliSecondsUtc: Long, hour: Int, minute: Int): Long {
         val calendar: Calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))

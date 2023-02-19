@@ -1,6 +1,7 @@
 package com.example.mytodo.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.view.MenuHost
@@ -107,14 +108,25 @@ class NoteFragment : Fragment(), MenuProvider {
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        menuInflater.inflate(R.menu.note_menu, menu)
+        if (noteViewModel.note.value != null) {
+            menuInflater.inflate(R.menu.note_menu, menu)
+            if (noteViewModel.note.value?.is_done == true) {
+                menu.findItem(R.id.mark_as_done).isVisible = false
+            } else {
+                menu.findItem(R.id.mark_as_undone).isVisible = false
+            }
+        }
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
             R.id.add_alarm -> {
                 if (noteViewModel.note.value == null) {
-                    Toast.makeText(requireContext(), getString(R.string.save_note_first), Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.save_note_first),
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                     return true
                 }
@@ -154,14 +166,51 @@ class NoteFragment : Fragment(), MenuProvider {
                             noteViewModel.deleteCurrentNote()
                         }.invokeOnCompletion {
                             if (it == null) {
-                                NoteFragmentDirections.actionNoteFragmentToHomeFragment().let { action ->
-                                    view?.findNavController()?.navigate(action)
-                                }
+                                NoteFragmentDirections.actionNoteFragmentToHomeFragment()
+                                    .let { action ->
+                                        view?.findNavController()?.navigate(action)
+                                    }
+                            } else {
+                                Toast.makeText(requireContext(), "Ошибка", Toast.LENGTH_SHORT)
+                                    .show()
+                                Log.e("NoteFragment", "Ошибка", it)
                             }
                         }
                     }
                     .setNegativeButton("Нет") { _, _ -> }
                     .show()
+                return true
+            }
+            R.id.mark_as_done -> {
+                lifecycle.coroutineScope.launch {
+                    noteViewModel.markNoteAsDone()
+                }.invokeOnCompletion {
+                    if (it == null) {
+                        NoteFragmentDirections.actionNoteFragmentToHomeFragment()
+                            .let { action ->
+                                view?.findNavController()?.navigate(action)
+                            }
+                    } else {
+                        Toast.makeText(requireContext(), "Ошибка", Toast.LENGTH_SHORT).show()
+                        Log.e("NoteFragment", "Ошибка", it)
+                    }
+                }
+                return true
+            }
+            R.id.mark_as_undone -> {
+                lifecycle.coroutineScope.launch {
+                    noteViewModel.markNoteAsNotDone()
+                }.invokeOnCompletion {
+                    if (it == null) {
+                        NoteFragmentDirections.actionNoteFragmentToHomeFragment()
+                            .let { action ->
+                                view?.findNavController()?.navigate(action)
+                            }
+                    } else {
+                        Toast.makeText(requireContext(), "Ошибка", Toast.LENGTH_SHORT).show()
+                        Log.e("NoteFragment", "Ошибка", it)
+                    }
+                }
                 return true
             }
         }

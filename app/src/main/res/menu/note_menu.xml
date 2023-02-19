@@ -3,6 +3,13 @@
     <item
         android:id="@+id/add_alarm"
         android:title="@string/note_set_alarm" />
+
+    <item
+        android:id="@+id/mark_as_done"
+        android:title="@string/mark_as_done" />
+    <item
+        android:id="@+id/mark_as_undone"
+        android:title="@string/mark_as_undone" />
     <item
         android:id="@+id/delete_note"
         android:title="@string/delete_note" />

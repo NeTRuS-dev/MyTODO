@@ -9,9 +9,9 @@ import com.example.mytodo.core.models.Alarm
 import com.example.mytodo.core.models.Note
 
 @Database(
-    version = 1,
+    version = 2,
     entities = [Note::class, Alarm::class],
-    autoMigrations = []
+    autoMigrations = [AutoMigration(from = 1, to = 2)]
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun noteDao(): NotesDao

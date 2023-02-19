@@ -30,17 +30,19 @@ class NotificationsReceiver : Hilt_NotificationsReceiver() {
                 if (noteId != -1) {
                     goAsync {
                         getNoteById(noteId)?.let { note ->
-                            val redirectIntent = alarmService.createPendingIntentToFragment(
-                                R.id.noteFragment,
-                                bundleOf(ARG_ID to noteId)
-                            )
-                            alarmService
-                                .showNotification(
-                                    noteId,
-                                    note.name,
-                                    note.content,
-                                    redirectIntent
+                            if (!note.is_done) {
+                                val redirectIntent = alarmService.createPendingIntentToFragment(
+                                    R.id.noteFragment,
+                                    bundleOf(ARG_ID to noteId)
                                 )
+                                alarmService
+                                    .showNotification(
+                                        noteId,
+                                        note.name,
+                                        note.content,
+                                        redirectIntent
+                                    )
+                            }
                         }
                     }
                 }
